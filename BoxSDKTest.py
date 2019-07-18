@@ -2,7 +2,7 @@ from boxsdk import Client, OAuth2
 
 CLIENT_ID = '1y5e8nsv6lcyx9i05y5rfjuvdv4rxu1k'
 CLIENT_SECRET = 'TOSKaweCeV9i85tLnyRto4YuZk6fYlqK'
-ACCESS_TOKEN = 'GIoGjW9h3kD53fBTjnGGuRAFBQdZT4je' # this is the developer token
+ACCESS_TOKEN = 'BJgvmJO9GDv14PKyOCT5CYMADgXz6xH7' # this is the developer token
 BDFOLDERNAME='BDTest'
 
 oauth2 = OAuth2(CLIENT_ID, CLIENT_SECRET, access_token=ACCESS_TOKEN)
@@ -10,12 +10,15 @@ oauth2 = OAuth2(CLIENT_ID, CLIENT_SECRET, access_token=ACCESS_TOKEN)
 client = Client(oauth2)
 
 my = client.user(user_id='me').get()
-print(my.name)
-print(my.login)
-print(my.avatar_url)
-folder = client.search().query(
+rootFolder = client.search().query(
     'BDTest'
 )
-for item in folder:
-    folder = item #jankball code, I know, but having needless nested for loops hurts my eyes even more.
-print(folder)
+for contents in rootFolder:
+    folderList = client.folder(folder_id=contents.id).get_items()
+for folder in folderList:
+    for charIndex in range(6,len(folder.name)):
+        if folder.name[charIndex].isalpha():
+            updated_folder = client.folder(folder.id).update_info({
+                            'name': folder.name[:charIndex].strip()
+                           })
+            break
